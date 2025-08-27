@@ -20,39 +20,59 @@ Serves the production build locally.
 
 ## Project Info
 
-This app displays a default landing page: **Welcome to Slide Menu Form!**
+A reusable side menu form component that slides in from the right. It supports different input types, including text, textarea, and file upload (dropzone). It is ideal for editing or creating entities without leaving the current page.
 
-## Learn More
+## Props
+| Prop        | Type                                                                                                                              | Required | Description                                                                                |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------ |
+| `isOpen`    | `boolean`                                                                                                                         | ✅ Yes    | Controls whether the side menu is open or closed.                                          |
+| `setIsOpen` | `React.Dispatch<React.SetStateAction<boolean>>`                                                                                   | ✅ Yes    | Function to update the `isOpen` state (e.g., toggling the menu).                           |
+| `fields`    | `Array<{ name: string; label: string; type: string; value: any; onChange: (e: any) => void; dropzone?: any; preview?: string; }>` | ✅ Yes    | Array of field objects defining form inputs. Supports `text`, `textarea`, `dropzone`, etc. |
+| `errors`    | `Record<string, any>`                                                                                                             | ❌ No     | Object containing validation errors keyed by field names.                                  |
+| `onSave`    | `() => void`                                                                                                                      | ✅ Yes    | Callback triggered when the user clicks the “Save” button.                                 |
 
-- [Vite Documentation](https://vitejs.dev/)
-- [React Documentation](https://react.dev/)
-- [TypeScript Documentation](https://www.typescriptlang.org/)
+## Example usage
+import { useState } from "react";
+import SideMenuForm from "./SideMenuForm";
+import { useDropzone } from "react-dropzone";
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+export default function Example() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [file, setFile] = useState<File | null>(null);
 
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
+  const dropzone = useDropzone({
+    onDrop: (acceptedFiles) => setFile(acceptedFiles[0]),
+    multiple: false,
+  });
 
-export default tseslint.config([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs["recommended-typescript"],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
+  const fields = [
+    { name: "name", label: "Name", type: "text", value: name, onChange: (e: any) => setName(e.target.value) },
+    { name: "description", label: "Description", type: "textarea", value: description, onChange: (e: any) => setDescription(e.target.value) },
+    { name: "logo", label: "Logo", type: "dropzone", dropzone, preview: file ? URL.createObjectURL(file) : null },
+  ];
+
+  const errors = {};
+
+  const handleSave = () => {
+    console.log({ name, description, file });
+    setIsOpen(false);
+  };
+
+  return (
+    <div>
+      <button onClick={() => setIsOpen(true)}>Open Form</button>
+      <SideMenuForm
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        fields={fields}
+        errors={errors}
+        onSave={handleSave}
+      />
+    </div>
+  );
+}
+
 ]);
 ```
