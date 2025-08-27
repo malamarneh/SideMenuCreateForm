@@ -32,7 +32,7 @@ A reusable side menu form component that slides in from the right. It supports d
 | `onSave`    | `() => void`                                                                                                                      | ✅ Yes    | Callback triggered when the user clicks the “Save” button.                                 |
 
 ## Example usage
-import { useState } from "react";
+`import { useState } from "react";
 import SideMenuForm from "./SideMenuForm";
 import { useDropzone } from "react-dropzone";
 
@@ -75,4 +75,4 @@ export default function Example() {
 }
 
 ]);
-```
+````
